@@ -1,6 +1,7 @@
 package pl.grafiszti.canyonbunny.game;
 
 import pl.grafiszti.canyonbunny.util.CameraHelper;
+import pl.grafiszti.canyonbunny.util.Constants;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Application.ApplicationType;
@@ -16,11 +17,12 @@ import com.badlogic.gdx.utils.Array;
 
 public class WorldController extends InputAdapter {
 	private static final String TAG = WorldController.class.getName();
-
-	public Sprite[] testSprites;
-	public int selectedSprite;
 	
 	public CameraHelper cameraHelper;
+	
+	public Level level;
+	public int lives;
+	public int score;
 	
 	public WorldController() {
 		init();
@@ -29,40 +31,13 @@ public class WorldController extends InputAdapter {
 	private void init() {
 		Gdx.input.setInputProcessor(this);
 		cameraHelper = new CameraHelper();
-		initTestObjects();
+		lives = Constants.LIVES_START;
+		initLevel();
 	}
 	
-	private void initTestObjects(){
-		//create new array for 5 sprites
-		testSprites = new Sprite[5];
-		
-		//create a list of texture regions
-		Array<TextureRegion> regions = new Array<TextureRegion>();
-		
-		regions.add(Assets.instance.bunny.head);
-		regions.add(Assets.instance.feather.feather);
-		regions.add(Assets.instance.goldCoin.goldCoin);
-		
-		//create new sprites using a random texture region
-		for(int i = 0; i < testSprites.length; i++){
-			Sprite spr = new Sprite(regions.random());
-			
-			//define sprite size to be 1m x 1m in game world
-			spr.setSize(1, 1);
-			
-			//set origin to sprite center
-			spr.setOrigin(spr.getWidth() / 2.0f, spr.getHeight() / 2.0f);
-			
-			//calculate random position of sprite
-			spr.setPosition(MathUtils.random(-2.0f, 2.0f), 
-							MathUtils.random(-2.0f, 2.0f));
-			
-			//put new sprite into array
-			testSprites[i] = spr;
-			
-			//set first sprite as selected one
-			selectedSprite = 0;
-		}
+	private void initLevel(){
+		score = 0;
+		level = new Level(Constants.LEVEL_01);
 	}
 	
 	@Override
@@ -72,24 +47,6 @@ public class WorldController extends InputAdapter {
 			init();
 			Gdx.app.debug(TAG, "Game world resetted");
 		}
-		
-		//select next sprite
-		else if(keycode == Keys.SPACE){
-			selectedSprite = (selectedSprite + 1) % testSprites.length;
-			
-			//update camera target to follow currently selected sprite
-			if(cameraHelper.hasTarget()){
-				cameraHelper.setTarget(testSprites[selectedSprite]);
-			}
-			
-			Gdx.app.debug(TAG, "Sprite #" + selectedSprite + " selected");
-		}
-		//toggle camera follow
-		else if(keycode == Keys.ENTER){
-			cameraHelper.setTarget(cameraHelper.hasTarget() ? null : testSprites[selectedSprite]);
-		}
-		
-		Gdx.app.debug(TAG, "camera follow enabled:" + cameraHelper.hasTarget());
 		return false;
 	}
 
@@ -111,46 +68,15 @@ public class WorldController extends InputAdapter {
 		
 		return pixmap;
 	}
-	
-	private void updateTestObjects(float deltaTime){
-		//get current rotation from selected sprite 
-		float rotation = testSprites[selectedSprite].getRotation();
-		
-		//rotate sprite by random degrees by second
-		rotation += MathUtils.random(40.0f, 100.0f) * deltaTime;
-		//wrap around at 360 degrees
-		
-		rotation %= 360;
-		
-		//set new rotation value to selected sprite
-		testSprites[selectedSprite].setRotation(rotation);
-	}
 
 	public void update(float deltaTime) {
 		handleDebugInput(deltaTime);
-		updateTestObjects(deltaTime);
 		cameraHelper.update(deltaTime);
 	}
 	
 	private void handleDebugInput(float deltaTime){
 		if(Gdx.app.getType() != ApplicationType.Desktop) {
 			return;
-		}
-		
-		//Selected Sprite controls
-		float sprMoveSpeed = 5 * deltaTime;
-		
-		if(Gdx.input.isKeyPressed(Keys.A)){
-			moveSelectedSprite(-sprMoveSpeed, 0);
-		}
-		if(Gdx.input.isKeyPressed(Keys.D)){
-			moveSelectedSprite(sprMoveSpeed, 0);
-		}
-		if(Gdx.input.isKeyPressed(Keys.W)){
-			moveSelectedSprite(0, sprMoveSpeed);
-		}
-		if(Gdx.input.isKeyPressed(Keys.S)){
-			moveSelectedSprite(0, -sprMoveSpeed);
 		}
 		
 		//camera controls (move)
@@ -197,9 +123,5 @@ public class WorldController extends InputAdapter {
 		x += cameraHelper.getPosition().x;
 		y += cameraHelper.getPosition().y;
 		cameraHelper.setPosition(x, y);
-	}
-	
-	private void moveSelectedSprite(float x, float y){
-		testSprites[selectedSprite].translate(x, y);
 	}
 }

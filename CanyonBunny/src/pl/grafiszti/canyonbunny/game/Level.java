@@ -86,6 +86,10 @@ public class Level {
 										 			* heightIncreaseFactor
 										 			+ offsetHeight);
 						rocks.add((Rock)obj);
+						Gdx.app.debug(TAG, 
+								"added rock to level at: x=" + 
+								obj.position.x + 
+								" y=" + obj.position.y);
 					} else {
 						rocks.get(rocks.size - 1).increaseLength(1);
 					}
@@ -129,5 +133,19 @@ public class Level {
 		Gdx.app.debug(TAG, "level '" + filename + "' loaded");
 	}
 	
-	public void render (SpriteBatch batch){ }
+	public void render (SpriteBatch batch){
+		//draw mountains
+		mountains.render(batch);
+		
+		//draw rocks
+		for(Rock rock : rocks){
+			rock.render(batch);
+		}
+		
+		//draw water overlay 
+		waterOverlay.render(batch);
+		
+		//draw clouds
+		clouds.render(batch);
+	}
 }

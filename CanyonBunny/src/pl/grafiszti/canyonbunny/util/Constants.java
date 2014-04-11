@@ -1,24 +1,27 @@
 package pl.grafiszti.canyonbunny.util;
 
 public class Constants {
-	//Visible game world is 5 meter wide
+	// Visible game world is 5 meter wide
 	public static final float VIEWPORT_WIDTH = 5.0f;
-	
-	//Visible game world is 5 meter tall 
+
+	// Visible game world is 5 meter tall
 	public static final float VIEWPORT_HEIGHT = 5.0f;
-	
-	//GUI Width
+
+	// GUI Width
 	public static final float VIEWPORT_GUI_WIDTH = 800.0f;
-	
-	//GUI Width
+
+	// GUI Width
 	public static final float VIEWPORT_GUI_HEIGHT = 480.0f;
-	
-	//location of description file for texture atlas
+
+	// location of description file for texture atlas
 	public static final String TEXTURE_ATLAS_OBJECTS = "images/canyonbunny.pack";
-	
-	//location if image file for level 01
+
+	// location if image file for level 01
 	public static final String LEVEL_01 = "levels/level-01.png";
-	
-	//Amount of extra lives at level start
+
+	// Amount of extra lives at level start
 	public static final int LIVES_START = 3;
+
+	// Duration of feather power-up in seconds
+	public static final float ITEM_FEATHER_POWERUP_DURATION = 9;
 }
